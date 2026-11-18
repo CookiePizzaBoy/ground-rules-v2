@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account Ground Rules 2026 v2</title>
+<style>
+:root{
+  --bg:#F4F3EF; --navy:#23344A; --gold:#B8955A; --goldTint:#F3ECDD; --slate:#6E8499; --slateTint:#E5EBF0;
+  --text:#1F2A37; --muted:#6B7480; --ok:#3E8E5E; --okTint:#E3F1E8; --bad:#B4473F; --badTint:#F6E3E1;
+  --ies:#2196F3; --iesPink:#E0336E;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1b2330;overflow:hidden}
+body{font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC","Heiti TC",sans-serif;color:var(--text)}
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1600px;height:900px;background:var(--bg);position:relative;transform-origin:center center;overflow:hidden;cursor:pointer;user-select:none}
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .5s}
+.slide.on{opacity:1}
+.h-title{position:absolute;left:56px;top:34px;font-size:36px;font-weight:700}
+.h-sub{position:absolute;left:56px;top:88px;font-size:17px;color:var(--muted)}
+.tag{display:inline-block;background:var(--gold);color:#fff;font-size:15px;font-weight:700;padding:3px 12px;border-radius:20px;margin-right:12px;vertical-align:5px}
+.pageno{position:absolute;right:30px;bottom:18px;font-size:13px;color:var(--muted)}
+.hint{position:absolute;left:56px;bottom:18px;font-size:12px;color:#A3A9B1}
+.fadein{animation:fi .45s}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* shared: avatars, badges */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex:none}
+.av.chen{background:#5B7DA6}.av.lin{background:#C08A3E}
+.badge{position:relative;height:56px;perspective:600px}
+.badge div{position:absolute;inset:0;border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;backface-visibility:hidden;transition:transform .7s}
+.badge .front{background:var(--gold)}
+.badge .back{background:var(--slate);transform:rotateX(180deg)}
+.badge.open .front{transform:rotateX(-180deg)}
+.badge.open .back{transform:none}
+.shake{animation:shake .5s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* ============ SLIDE 1 ============ */
+.lane{position:absolute;top:140px;width:728px;height:590px;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.07);padding:28px 32px;transition:box-shadow .4s, transform .4s}
+.lane.focus{box-shadow:0 0 0 3px var(--gold),0 10px 28px rgba(0,0,0,.1)}
+.lane.dim{opacity:.55}
+.lane .lh{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.lane .ln{width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.lane .lt{font-size:30px;font-weight:700}
+.lane .ls{font-size:17px;color:var(--muted);margin:2px 0 28px 58px}
+.mini{border:1px solid #E4E6EA;border-radius:8px;overflow:hidden;font-size:17px}
+.mini .bar{background:var(--ies);color:#fff;padding:9px 14px;font-size:15px}
+.mini table{width:100%;border-collapse:collapse}
+.mini th{background:#F2F2F2;text-align:left;padding:8px 12px;font-weight:700;border-bottom:1px solid #e6e6e6}
+.mini td{padding:16px 12px}
+.st{display:inline-block;color:#fff;font-size:14px;padding:3px 9px;border-radius:3px;font-weight:700;transition:all .4s}
+.st.g{background:#1E9E86}.st.r{background:var(--bad)}
+.today{display:inline-flex;align-items:center;gap:8px;margin:26px 0 0;font-size:18px;background:var(--slateTint);padding:6px 14px;border-radius:18px}
+.result{display:flex;align-items:center;gap:18px;margin-top:24px;padding-top:22px;border-top:1px dashed #E3E1DC}
+.result .arrow{font-size:28px;color:var(--gold)}
+.result .badge{width:150px}
+.result .rt{font-size:20px;line-height:1.55;flex:1;opacity:0;transition:opacity .5s .5s}
+.result.done .rt{opacity:1}
+.result .rt b{color:var(--navy)}
+/* lane B timeline */
+.tl{position:relative;height:74px;margin:4px 30px 0 20px}
+.tl .track{position:absolute;left:0;right:0;top:20px;height:10px;border-radius:5px;background:#ECEAE4}
+.tl .fill{position:absolute;left:0;top:20px;height:10px;border-radius:5px;background:var(--gold);width:0}
+.tl .fill.run{width:100%;transition:width 2.4s linear}
+.tl .tick{position:absolute;top:40px;font-size:14px;white-space:nowrap;color:var(--muted);transform:translateX(-50%)}
+.tl .knob{position:absolute;top:12px;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--gold);left:0;transform:translateX(-50%)}
+.tl .knob.run{left:100%;transition:left 2.4s linear}
+.ck{list-style:none;margin-top:6px}
+.ck li{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid #F0EEE9;font-size:19px}
+.ck .ic{width:30px;height:30px;border-radius:50%;background:#E9E7E1;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.ck .v{margin-left:auto;font-weight:700;opacity:0;transition:opacity .3s}
+.ck li.on .ic{background:var(--gold)}
+.ck li.on .v{opacity:1}
+.banner{position:absolute;left:56px;right:56px;top:758px;height:82px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:18px;padding:0 30px;font-size:22px;font-weight:700;opacity:0;transform:translateY(12px);transition:all .5s}
+.banner.on{opacity:1;transform:none}
+.banner small{display:block;font-size:15px;color:#C9D1DB;font-weight:400;margin-top:3px}
+.banner .bi{font-size:30px}
+
+/* ============ SLIDE 2 ============ */
+.win{position:absolute;left:56px;top:132px;width:900px;height:708px;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);overflow:hidden}
+.chrome{height:30px;background:#ECEDEF;display:flex;align-items:center;padding:0 12px;gap:7px}
+.chrome i{width:10px;height:10px;border-radius:50%;background:#D0D3D8;display:block}
+.chrome .url{margin-left:14px;background:#fff;border-radius:6px;height:20px;flex:1;font-size:12px;color:#888;display:flex;align-items:center;padding-left:10px}
+.nav{height:36px;background:var(--ies);display:flex;align-items:center;padding:0 16px;gap:22px;color:#fff;font-size:14px}
+.crumb{padding:11px 20px 9px;font-size:16px;color:#333;background:#F2F2F2}
+.crumb b{color:#1E6FB8;font-weight:400;font-size:19px}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #eee;padding:0 8px;font-size:14px}
+.tabs span{padding:11px 14px 9px;color:#444;border-bottom:3px solid transparent}
+.tabs span.on{font-weight:700;color:#111;border-bottom-color:var(--iesPink)}
+.body2{position:absolute;left:0;right:0;top:146px;bottom:0;background:#FAFAFA;padding:16px 18px;display:flex;gap:16px}
+.pl{width:250px;background:#fff;border:1px solid #e6e6e6;border-radius:6px;padding:18px;text-align:center}
+.pl .logo{width:100px;height:70px;margin:0 auto 10px;background:#eee;color:#bbb;display:flex;align-items:center;justify-content:center;letter-spacing:2px}
+.pl .cn{font-size:18px;font-weight:700}
+.pl .lbl{font-size:15px;color:#666;margin-top:20px}
+.holder{position:relative;width:100px;height:100px;margin:10px auto 0}
+.holder .av{position:absolute;inset:0;font-size:38px;transition:transform .6s, opacity .6s}
+.holder .av.lin{transform:rotateY(90deg);opacity:0}
+.holder.swap .av.chen{transform:rotateY(90deg);opacity:0}
+.holder.swap .av.lin{transform:none;opacity:1;transition-delay:.3s}
+.hname{font-size:15px;font-weight:700;margin-top:10px}
+.pinghint{margin-top:12px;display:inline-block;background:var(--gold);color:#fff;font-size:13px;font-weight:700;padding:5px 12px;border-radius:14px;opacity:0;transform:scale(.7);transition:all .4s .7s}
+.pinghint.on{opacity:1;transform:none}
+.pr{flex:1;display:flex;flex-direction:column;gap:12px}
+.post{background:#fff;border:1px solid #e6e6e6;border-radius:6px;padding:12px 14px;color:#999;font-size:13px;height:60px}
+.feed{background:#fff;border:1px solid #e6e6e6;border-radius:6px;padding:4px 14px;flex:1;overflow:hidden;position:relative}
+.rem{display:flex;gap:12px;padding:12px 4px;border-bottom:1px dashed #e5e5e5;position:relative;max-height:140px;transition:max-height .5s, opacity .45s, padding .5s, background .4s}
+.rem .av{width:42px;height:42px;font-size:17px;border-radius:6px}
+.rem .who{font-weight:700;color:#3C6FA8;font-size:14px}
+.rem .when{float:right;font-size:12px;color:#888}
+.rem .chip{display:inline-block;background:#3E8E7E;color:#fff;font-size:11px;padding:2px 7px;border-radius:3px;margin:3px 0}
+.rem .bd{font-size:15px;color:#222;margin-top:2px}
+.rem.hide{max-height:0;opacity:0;padding-top:0;padding-bottom:0;border-bottom-width:0;overflow:hidden}
+.rem.hl{background:#FFFBEA}
+.vd{position:absolute;right:4px;bottom:10px;font-size:13px;font-weight:700;padding:4px 11px;border-radius:14px;opacity:0;transform:scale(.6);transition:all .35s .45s}
+.rem:not(.hide) .vd{opacity:1;transform:none}
+.vd.bad{background:var(--badTint);color:var(--bad)}.vd.mid{background:var(--goldTint);color:#8C6A2F}.vd.good{background:var(--okTint);color:var(--ok)}
+.jobtoast{position:absolute;right:18px;bottom:18px;background:#fff;border:1px solid #E4E6EA;border-left:0;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);padding:10px 14px;font-size:14px;display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(14px);transition:all .45s .5s}
+.jobtoast.on{opacity:1;transform:none}
+.jobtoast .st{background:#1E9E86}
+.rewind{position:absolute;inset:0;background:rgba(35,52,74,.78);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#fff;opacity:0;pointer-events:none}
+.rewind.go{animation:rw 1.3s ease}
+.rewind .ri{font-size:56px;animation:spin 1.3s ease}
+.rewind .rt{font-size:22px;font-weight:700}
+@keyframes rw{0%{opacity:0}20%{opacity:1}75%{opacity:1}100%{opacity:0}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+
+.side{position:absolute;left:986px;top:132px;width:558px;height:708px;display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.06);padding:16px 20px;position:relative}
+.card .cap{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.status{display:flex;align-items:center;gap:16px}
+.status .badge{width:160px}
+.badge .prot{position:absolute;inset:0;border-radius:28px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:21px;font-weight:800;color:#fff;background:var(--navy);opacity:0;transform:scale(.6);transition:all .5s}
+.badge.protect .prot{opacity:1;transform:none}
+.badge.protect .front,.badge.protect .back{opacity:0}
+.sh{display:flex;align-items:center;gap:10px;font-size:15px}
+.sh .av{width:38px;height:38px;font-size:16px;transition:background .4s}
+.sh small{display:block;color:var(--muted);font-size:12px}
+.pbar{margin-top:14px;display:none}
+.pbar.on{display:block;animation:fi .4s}
+.pbar .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px}
+.pbar .row b{color:var(--text)}
+.pbar .track{height:12px;border-radius:6px;background:var(--goldTint);overflow:hidden;position:relative}
+.pbar .used{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gold)}
+.pbar .used.run{width:100%;transition:width 2.6s linear}
+.pbar .lock{margin-top:9px;font-size:13px;color:var(--text)}
+.branches{display:flex;gap:10px}
+.br{flex:1;border-radius:10px;padding:10px 12px;background:#F1EFEA;opacity:.45;transition:all .4s;display:flex;align-items:center;gap:10px}
+.br .bi{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800;flex:none}
+.br .bt{font-size:15px;font-weight:700}
+.br .bs{font-size:12px;color:var(--muted)}
+.br.on{opacity:1;background:#fff;box-shadow:0 0 0 2px var(--gold)}
+.br.seen{opacity:.85}
+.b1 .bi{background:var(--bad)}.b2 .bi{background:var(--navy)}.b3 .bi{background:var(--ok)}
+.explain{flex:1;display:flex;flex-direction:column;padding:22px 24px}
+.explain .ex-k{display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:800;padding:6px 14px;border-radius:18px;align-self:flex-start;margin-bottom:14px}
+.ex-k.bad{background:var(--badTint);color:var(--bad)}.ex-k.mid{background:var(--slateTint);color:var(--navy)}.ex-k.good{background:var(--okTint);color:var(--ok)}.ex-k.neu{background:var(--goldTint);color:#8C6A2F}
+.explain .ex-t{font-size:25px;font-weight:700;line-height:1.45}
+.explain .ex-t em{font-style:normal;color:var(--gold)}
+.explain ul{list-style:none;margin-top:14px}
+.explain li{font-size:16px;line-height:1.55;padding:5px 0 5px 26px;position:relative;color:#333}
+.explain li:before{content:"";position:absolute;left:6px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.explain .dots{margin-top:auto;display:flex;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;background:#DDD8CD;transition:all .3s}
+.dot.on{background:var(--gold);width:22px;border-radius:5px}
+
+/* summary table */
+.sum{position:absolute;inset:0;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .5s;padding:34px 56px}
+.sum.on{opacity:1}
+.sum h2{font-size:36px;margin-bottom:8px}
+.sum .sub{font-size:17px;color:var(--muted);margin-bottom:28px}
+.cols{display:flex;gap:22px;height:540px}
+.sban{margin-top:24px;height:84px;border-radius:12px;background:var(--goldTint);display:flex;align-items:center;gap:16px;padding:0 30px;font-size:21px;font-weight:700;color:var(--text);opacity:0;transition:opacity .5s .6s}
+.sum.on .sban{opacity:1}
+.sban span{font-size:28px}
+.col{flex:1;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.07);overflow:hidden;opacity:0;transform:translateY(16px);transition:all .5s}
+.sum.on .col{opacity:1;transform:none}
+.sum.on .col:nth-child(2){transition-delay:.15s}.sum.on .col:nth-child(3){transition-delay:.3s}
+.col .ch{padding:22px 26px;color:#fff;display:flex;align-items:center;gap:14px}
+.col .ch .ci{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800}
+.col .ch b{font-size:28px;display:block}
+.col .ch small{font-size:14px;opacity:.85}
+.col.c1 .ch{background:var(--bad)}.col.c2 .ch{background:var(--navy)}.col.c3 .ch{background:var(--ok)}
+.col .cb{padding:22px 26px 30px}
+.col .lab{font-size:15px;color:var(--muted);font-weight:700;letter-spacing:1px;margin:14px 0 10px}
+.col .ex{background:#F7F6F2;border-radius:8px;padding:14px 18px;font-size:20px;margin-bottom:10px}
+.col .res{font-size:24px;font-weight:700;line-height:1.5;color:var(--text)}
+.col .res span{display:block;font-weight:400;font-size:18px;line-height:1.6;color:#444;margin-top:4px}
+
+/* ===== layout fix: robust fit ===== */
+#viewport{display:block !important;overflow:hidden}
+#stage{position:absolute !important;left:50%;top:50%;transform-origin:center center}
+
+/* ===== generic reveal ===== */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .5s, transform .5s}
+.rv.in{opacity:1;transform:none}
+.wcard{position:absolute;background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.07)}
+.icirc{border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.icirc svg{width:55%;height:55%}
+.navyban{position:absolute;left:56px;right:56px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:18px;padding:0 30px;font-size:22px;font-weight:700}
+.navyban small{display:block;font-size:15px;color:#C9D1DB;font-weight:400;margin-top:3px}
+.goldban{position:absolute;left:56px;right:56px;border-radius:12px;background:var(--goldTint);display:flex;align-items:center;gap:18px;padding:0 30px;font-size:19px;color:var(--text)}
+.goldban b{display:block;font-size:20px}
+
+/* ===== controls ===== */
+#ctrl{position:absolute;right:22px;bottom:12px;display:flex;align-items:center;gap:8px;z-index:50}
+#ctrl button{border:0;background:#fff;color:var(--navy);font-family:inherit;font-size:14px;font-weight:700;height:32px;min-width:34px;padding:0 12px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer}
+#ctrl button.on{background:var(--gold);color:#fff}
+#ctrl .pg{font-size:13px;color:var(--muted);margin:0 4px;min-width:44px;text-align:center}
+.pageno{display:none}
+body.print #ctrl,body.print #bar,body.print .hint{display:none !important}
+#bar{position:absolute;left:0;bottom:0;height:4px;background:var(--gold);transition:width .4s;z-index:40}
+.dark #ctrl .pg{color:#C9D1DB}
+
+/* ===== cover ===== */
+#cover .ct{position:absolute;left:0;right:0;top:200px;text-align:center}
+#cover h1{font-size:68px;color:var(--navy);letter-spacing:.5px}
+#cover .ver{display:inline-block;background:var(--gold);color:#fff;font-size:22px;font-weight:800;padding:5px 22px;border-radius:24px;margin-top:18px}
+#cover .st2{font-size:28px;margin-top:22px;color:var(--text)}
+#cover .comp{position:absolute;left:50%;top:560px;width:190px;height:190px;margin-left:-95px;border-radius:50%;background:#fff;border:3px solid var(--gold);box-shadow:0 8px 26px rgba(0,0,0,.1)}
+#cover .needle{position:absolute;inset:0;animation:needle 3.2s ease-in-out infinite}
+@keyframes needle{0%{transform:rotate(-30deg)}50%{transform:rotate(25deg)}100%{transform:rotate(-30deg)}}
+#cover .date{position:absolute;left:0;right:0;bottom:60px;text-align:center;color:var(--muted);font-size:17px}
+
+/* ===== review ===== */
+.stat{position:absolute;left:56px;width:640px;height:250px;padding:34px 40px}
+.stat .num{font-size:104px;font-weight:800;color:var(--navy);line-height:1}
+.stat .num.gold{color:var(--gold);font-size:84px}
+.stat .lab{font-size:24px;font-weight:700;margin-top:14px}
+.stat .lab small{display:block;font-size:16px;color:var(--muted);font-weight:400;margin-top:4px}
+.bgrid{position:absolute;left:736px;top:140px;width:808px;height:520px;padding:30px 36px}
+.bgrid h3{font-size:22px;margin-bottom:22px}
+.bgrid .g{display:grid;grid-template-columns:repeat(6,1fr);gap:20px 18px}
+.bld{width:96px;height:96px;border-radius:50%;background:var(--slateTint);display:flex;align-items:center;justify-content:center;transition:all .5s;margin:0 auto}
+.bld svg{width:44px;height:44px;fill:#B3BBC4;transition:fill .5s}
+.bld.lit{background:var(--goldTint);box-shadow:0 0 0 3px var(--gold)}
+.bld.lit svg{fill:var(--gold)}
+.bgrid .cap2{font-size:15px;color:var(--muted);margin-top:22px}
+
+/* ===== core ===== */
+.core{position:absolute;top:160px;width:440px;height:560px;padding:44px 34px;text-align:center}
+.core .icirc{width:150px;height:150px;margin:0 auto 34px}
+.core h3{font-size:36px;margin-bottom:20px}
+.core p{font-size:21px;line-height:1.65;color:#4A5260}
+.core.mid{box-shadow:0 0 0 3px var(--navy),0 10px 30px rgba(0,0,0,.12)}
+.chev{position:absolute;top:420px;font-size:40px;color:var(--gold);font-weight:800}
+
+/* ===== states ===== */
+.stc{position:absolute;top:160px;width:728px;height:500px;padding:38px 40px}
+.stc .hd{display:flex;align-items:center;gap:18px;margin-bottom:26px}
+.stc .hd .icirc{width:76px;height:76px}
+.stc .hd b{font-size:36px;display:block}
+.stc .hd small{font-size:17px;color:var(--muted)}
+.stc ul{list-style:none}
+.stc li{display:flex;gap:14px;align-items:flex-start;font-size:22px;padding:16px 0;border-bottom:1px solid #F0EEE9;line-height:1.45}
+.stc li .ck2{width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;margin-top:2px}
+.stc .pre{margin-top:22px;background:var(--goldTint);border-radius:10px;padding:16px 20px;font-size:19px;font-weight:700}
+.stc li.key{background:var(--slateTint);border-radius:10px;padding:14px 16px;border:2px solid var(--slate);margin-top:10px;transition:box-shadow .4s}
+.stc li.key.pulse{animation:kp 1.4s ease-in-out 2}
+@keyframes kp{50%{box-shadow:0 0 0 8px rgba(110,132,153,.25)}}
+.stc li.key small{display:block;font-size:15px;color:var(--muted);font-weight:400;margin-top:4px}
+
+/* ===== GBL ===== */
+.gblL{position:absolute;left:56px;top:160px;width:470px;height:520px;background:var(--navy);color:#fff;border-radius:12px;padding:44px 40px}
+.gblL h3{font-size:34px;margin:30px 0 18px}
+.gblL p{font-size:19px;line-height:1.7;color:#D6DCE4}
+.gg{position:absolute;left:556px;top:160px;width:988px;height:520px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:20px}
+.gc{background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.07);padding:28px;transition:all .45s;opacity:.35}
+.gc.lit{opacity:1;box-shadow:0 0 0 3px var(--gold),0 8px 24px rgba(0,0,0,.1)}
+.gc.seen{opacity:1}
+.gc .icirc{width:64px;height:64px;background:var(--slateTint);margin-bottom:18px}
+.gc b{font-size:22px;display:block;margin-bottom:8px}
+.gc span{font-size:16px;color:var(--muted)}
+.lens{position:absolute;width:90px;height:90px;transition:left .55s ease, top .55s ease, opacity .3s;opacity:0;pointer-events:none;z-index:5}
+.lens.on{opacity:1}
+
+/* ===== KA ===== */
+.kpanel{position:absolute;left:946px;top:132px;width:598px;height:708px;display:flex;flex-direction:column;gap:14px}
+.meter{position:relative;height:26px;border-radius:13px;background:#ECEAE4;margin:8px 0 26px}
+.meter .mf{position:absolute;left:0;top:0;bottom:0;border-radius:13px;background:var(--gold);transition:width .9s ease}
+.meter .th{position:absolute;top:-8px;bottom:-8px;width:3px;background:var(--navy)}
+.meter .thl{position:absolute;top:32px;font-size:13px;font-weight:700;color:var(--navy);transform:translateX(-50%);white-space:nowrap}
+.mrowk{display:flex;justify-content:space-between;align-items:baseline;font-size:16px}
+.mrowk b{font-size:30px;color:var(--navy)}
+.cases{display:flex;gap:12px;margin-top:6px}
+.case{width:46px;height:46px;border-radius:50%;border:3px dashed #CFCBC1;display:flex;align-items:center;justify-content:center;font-weight:800;color:#CFCBC1;font-size:18px;transition:all .5s}
+.case.on{border:3px solid var(--gold);background:var(--gold);color:#fff}
+.kabadge{display:inline-flex;align-items:center;gap:8px;font-size:22px;font-weight:800;padding:10px 22px;border-radius:26px;background:#ECEAE4;color:#A5A096;transition:all .6s}
+.kabadge.on{background:var(--navy);color:#F3D9A4;box-shadow:0 0 0 4px rgba(184,149,90,.35)}
+.split{display:flex;height:44px;border-radius:8px;overflow:hidden;font-size:16px;font-weight:700;color:#fff}
+.split .a{background:var(--gold);display:flex;align-items:center;padding-left:14px;transition:width .9s ease;white-space:nowrap}
+.split .p{flex:1;background:var(--slate);display:flex;align-items:center;padding-left:14px}
+.isKA{float:right;margin:8px 16px 0 0;font-size:14px;color:#666}
+.isKA b{display:inline-block;padding:2px 10px;border-radius:12px;background:#ddd;color:#555;margin-left:6px;transition:all .5s}
+.isKA b.on{background:#1E9E86;color:#fff}
+.ktable{width:100%;border-collapse:collapse;font-size:15px;background:#fff}
+.ktable th{background:#F0F0F0;text-align:left;padding:10px;border:1px solid #e3e3e3}
+.ktable td{padding:11px 10px;border:1px solid #e9e9e9}
+.ktable tr.k{opacity:0;transform:translateX(-16px);transition:all .5s}
+.ktable tr.k.on{opacity:1;transform:none}
+.ktable tr.k.new{background:#FFFBEA}
+.ktable td.code{color:#2F6FA8}
+.ktable tfoot td{font-weight:800;background:#FAF7EF}
+.life{position:absolute;inset:0;background:#fff;padding:30px 34px;opacity:0;pointer-events:none;transition:opacity .5s}
+.life.on{opacity:1}
+.life h3{font-size:24px;margin-bottom:6px}
+.life .q{display:flex;gap:6px;margin:34px 0 12px}
+.life .q div{flex:1;height:58px;border-radius:8px;background:#ECEAE4;color:#999;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;transition:all .45s}
+.life .q div.on{background:var(--navy);color:#fff}
+.life .fork{display:flex;gap:16px;margin-top:30px}
+.life .fork div{flex:1;border-radius:10px;padding:18px 20px;font-size:17px;line-height:1.6}
+.life .fork b{display:block;font-size:20px;margin-bottom:4px}
+
+/* ===== breakup ===== */
+.bk{position:absolute;top:150px;width:640px;height:620px;padding:40px;text-align:center;perspective:1000px}
+.bk h3{font-size:30px}
+.bk .icirc{width:150px;height:150px;margin:30px auto}
+.bk .d{background:#F7F6F2;border-radius:10px;padding:16px;font-size:19px}
+.bk .big{font-size:46px;font-weight:800;margin-top:34px}
+.bk .sm{font-size:16px;color:var(--muted);margin-top:8px}
+
+/* ===== special ===== */
+.sp-top{position:absolute;left:300px;top:150px;width:1000px;height:150px;display:flex;align-items:center;gap:26px;padding:0 40px}
+.sp-top .icirc{width:84px;height:84px;background:var(--goldTint)}
+.ring{animation:ring 1s ease-in-out infinite}
+@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(6deg)}}
+.sp-top p{font-size:22px;line-height:1.6}
+.sp-br{position:absolute;top:470px;width:620px}
+.sp-br .m{background:#fff;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.07);height:110px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800}
+.sp-br .s{margin-top:16px;border-radius:12px;height:110px;display:flex;align-items:center;gap:16px;padding:0 28px;font-size:19px;line-height:1.5}
+.sp-lab{position:absolute;top:370px;font-size:20px;font-weight:800}
+svg.lines{position:absolute;left:0;top:0;pointer-events:none}
+
+/* ===== naming / dup ===== */
+.srch{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.srch .box{flex:0 0 360px;height:42px;border:2px solid var(--ies);border-radius:6px;background:#fff;display:flex;align-items:center;padding:0 12px;font-size:17px}
+.srch .box .cur{display:inline-block;width:2px;height:22px;background:#333;margin-left:2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.srch .found{font-size:16px}
+.srch .found b{color:var(--bad)}
+.ntable{width:100%;border-collapse:collapse;font-size:15px;background:#fff}
+.ntable th{background:#F0F0F0;text-align:left;padding:10px;border:1px solid #e3e3e3}
+.ntable td{padding:12px 10px;border:1px solid #e9e9e9;transition:all .4s}
+.ntable td.code{color:#2F6FA8}
+.ntable tr{transition:opacity .4s}
+.ntable tr.gone{display:none}
+.ntable td.hlc{background:#FFF3C9;box-shadow:inset 0 0 0 2px var(--gold)}
+.ntable tr.dupe td{background:var(--badTint)}
+.ntable tr.fixed td{background:var(--okTint)}
+.rulecards{position:absolute;left:1000px;top:132px;width:544px;display:flex;flex-direction:column;gap:14px}
+.rc{background:#fff;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.06);padding:20px 24px}
+.rc b{font-size:20px;display:block;margin-bottom:6px}
+.rc span{font-size:16px;color:#4A5260;line-height:1.6}
+.rc.good{box-shadow:0 0 0 3px var(--ok)}
+.rc.bad{box-shadow:0 0 0 3px var(--bad)}
+.stamp{display:inline-block;font-size:13px;font-weight:800;padding:2px 9px;border-radius:12px;margin-left:8px}
+.stamp.r{background:var(--bad);color:#fff}.stamp.g{background:var(--ok);color:#fff}
+
+/* ===== final ===== */
+#fin{background:var(--navy)}
+#fin h2{position:absolute;left:56px;top:56px;font-size:44px;color:#fff}
+#fin .sub3{position:absolute;left:56px;top:122px;font-size:20px;color:#C9D1DB}
+.fc{position:absolute;top:210px;width:280px;height:460px;border:1.5px solid var(--gold);border-radius:14px;background:rgba(255,255,255,.06);padding:30px 26px;color:#fff}
+.fc .icirc{width:70px;height:70px;background:var(--gold);margin-bottom:24px}
+.fc b{font-size:26px;display:block;margin-bottom:14px}
+.fc p{font-size:19px;line-height:1.7;color:#DDE3EA}
+.fin-ft{position:absolute;left:56px;right:56px;bottom:70px;text-align:center;font-size:22px;color:#E7C989;font-weight:700}
+
+.anote{margin-top:16px;background:var(--goldTint);border-radius:10px;padding:12px 16px;font-size:16px;line-height:1.55;opacity:0;transition:opacity .5s .4s}
+.anote.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- ================= COVER ================= -->
+<section class="slide" id="cover">
+  <div class="ct">
+    <h1>Account Ground Rules 2026</h1>
+    <div class="ver">v2.0</div>
+    <div class="st2">活化資源・極大化業績：客戶管理戰略指南</div>
+  </div>
+  <div class="comp">
+    <svg viewBox="0 0 190 190" style="position:absolute;inset:0">
+      <circle cx="95" cy="95" r="70" fill="none" stroke="#E5DCCB" stroke-width="2"/>
+      <text x="95" y="38" text-anchor="middle" font-size="16" font-weight="800" fill="#23344A">N</text>
+    </svg>
+    <svg class="needle" viewBox="0 0 190 190">
+      <polygon points="95,40 106,95 95,150 84,95" fill="#23344A"/>
+      <polygon points="95,40 106,95 84,95" fill="#B8955A"/>
+      <circle cx="95" cy="95" r="9" fill="#fff" stroke="#23344A" stroke-width="3"/>
+    </svg>
+  </div>
+  <div class="date">2026 年 11 月・第二版</div>
+</section>
+
+<!-- ================= REVIEW ================= -->
+<section class="slide" id="review">
+  <div class="h-title">一年回顧：11 個月的成果</div>
+  <div class="h-sub">新規則跑了接近一年，原本沒人顧的 account 真的動起來了</div>
+  <div class="wcard stat" style="top:140px"><div class="num" id="cnt1">0</div><div class="lab">個 Account Shift<small>原本停滯的客戶，交給更有餘力經營的同事</small></div></div>
+  <div class="wcard stat" style="top:410px"><div class="num gold"><span id="cnt2">0</span>–<span id="cnt3">0</span> 萬</div><div class="lab">Shift 後新開案業績<small>被 shift 的客戶重新開出來的案子</small></div></div>
+  <div class="wcard bgrid">
+    <h3>沉睡 → 活化</h3>
+    <div class="g" id="bg"></div>
+    <div class="cap2">示意：每一顆亮起來的，是一個重新有人經營、有案子在跑的客戶</div>
+  </div>
+  <div class="navyban rv" data-s="1" style="top:700px;height:110px"><span style="font-size:32px">🤝</span><div>中間有爭議、討論、談判與妥協，所以有了 v2<small>這一版的目的：讓大家對 Ground Rules 更清楚、站在同一個理解上</small></div></div>
+</section>
+
+<!-- ================= CORE ================= -->
+<section class="slide" id="core">
+  <div class="h-title">制度核心：不為競爭，為創造共贏</div>
+  <div class="wcard core rv" data-s="0" style="left:56px">
+    <div class="icirc" style="background:var(--slateTint)"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M6 2h12v2h-1v3.6a4 4 0 0 1-1.6 3.2L13.2 12l2.2 1.2A4 4 0 0 1 17 16.4V20h1v2H6v-2h1v-3.6a4 4 0 0 1 1.6-3.2L10.8 12 8.6 10.8A4 4 0 0 1 7 7.6V4H6V2zm3 2v3.6c0 .7.4 1.4 1 1.7l3 1.7 3-1.7c.6-.3 1-1 1-1.7V4H9z"/></svg></div>
+    <h3>停滯客戶</h3><p>勇敢放手停滯客戶，<br>釋放無力經營的資源</p>
+  </div>
+  <div class="chev rv" data-s="0" style="left:510px;transition-delay:.3s">›</div>
+  <div class="wcard core mid rv" data-s="0" style="left:580px;transition-delay:.45s">
+    <div class="icirc" style="background:var(--slateTint)"><svg viewBox="0 0 24 24" fill="#23344A"><path d="M3 20h18v2H3zM4 17l5-6 4 3 6-8 1.6 1.2-7.2 9.6-4-3L5.6 18.3z"/></svg></div>
+    <h3>業績增長</h3><p>透過客觀的系統化判定機制，<br>最大化全體團隊的業績</p>
+  </div>
+  <div class="chev rv" data-s="0" style="left:1034px;transition-delay:.6s">‹</div>
+  <div class="wcard core rv" data-s="0" style="left:1104px;transition-delay:.75s">
+    <div class="icirc" style="background:var(--goldTint)"><svg viewBox="0 0 24 24" fill="#B8955A"><path d="M6 3h12l4 6-10 12L2 9l4-6zm1.1 2L4.6 8.7h4.2L10.2 5H7.1zm5.1 0-1.4 3.7h2.4L11.8 5h.4zm3.6 0 1.4 3.7h4.2L16.9 5h-1.1zM4.9 10.7l5.6 6.7-2.1-6.7H4.9zm5.6 0 1.5 5 1.5-5h-3zm5.1 0-2.1 6.7 5.6-6.7h-3.5z"/></svg></div>
+    <h3>高價值</h3><p>專注於高價值、好推進的目標，<br>深化客戶體驗</p>
+  </div>
+</section>
+
+<!-- ================= STATES ================= -->
+<section class="slide" id="states">
+  <div class="h-title">兩大帳戶狀態：判定的絕對標準</div>
+  <div class="h-sub">每一項都看 IES 紀錄</div>
+  <div class="wcard stc rv" data-s="0" style="left:56px">
+    <div class="hd"><div class="icirc" style="background:var(--goldTint)"><svg viewBox="0 0 24 24" fill="#B8955A"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/></svg></div><div><b style="color:var(--gold)">Active</b><small>別人不能碰</small></div></div>
+    <ul>
+      <li><span class="ck2" style="background:var(--gold)">✓</span>6 個月內有 IES 客勤紀錄（BM／PPC／Call 留言）</li>
+      <li><span class="ck2" style="background:var(--gold)">✓</span>6 個月內有新開職缺</li>
+      <li><span class="ck2" style="background:var(--gold)">✓</span>6 個月內有 Billing（成案）</li>
+    </ul>
+    <div class="pre">前提：合約有效，或與客戶有共識沿用</div>
+  </div>
+  <div class="wcard stc rv" data-s="1" style="left:816px">
+    <div class="hd"><div class="icirc" style="background:var(--slateTint)"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2zm0 4a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V6zm0 4a2 2 0 1 0 2 2l6.3-6.3-1.4-1.4L12.6 10.6A2 2 0 0 0 12 10z"/></svg></div><div><b style="color:var(--slate)">Open</b><small>同事可以有效進攻</small></div></div>
+    <ul>
+      <li><span class="ck2" style="background:var(--slate)">✓</span>全新客戶（沒有其他合約）</li>
+      <li><span class="ck2" style="background:var(--slate)">✓</span>只有 IES 聯繫紀錄，沒有簽約</li>
+      <li><span class="ck2" style="background:var(--slate)">✓</span>合約失效，且沒有共識沿用</li>
+      <li class="key" id="stKey"><span class="ck2" style="background:var(--slate)">!</span><div><b>合約有效，但 6 個月內沒有任何動作</b><small>v2：自動 Open，不需 GBL 確認（下一頁演示）</small></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= SLIDE 1 ================= -->
+<section class="slide" id="s1">
+  <div class="h-title">怎麼變成 Open：兩條路</div>
+  <div class="h-sub">不需要 GBL 確認，IES 紀錄就是依據</div>
+
+  <div class="lane" id="laneA" style="left:56px">
+    <div class="lh"><div class="ln">A</div><div class="lt">合約失效</div></div>
+    <div class="ls">主流合約每年自動續約；沒有續約、也沒有共識沿用，就是失效</div>
+    <div class="mini">
+      <div class="bar">TOS/Agreements</div>
+      <table>
+        <tr><th>Code</th><th>TOS Title</th><th>Status</th></tr>
+        <tr><td style="color:#2F6FA8">TOS032500004</td><td>ABC 未來科技有限公司</td><td><span class="st g" id="aSt">Approved</span></td></tr>
+      </table>
+    </div>
+    <div class="today" id="aToday">📅 合約狀態：<b id="aTxt">有效</b></div>
+    <div class="anote" id="aNote">⚠️ 例外：原 AC 有留言寫明「客戶接受合約失效，但招募繼續」→ 視為共識沿用，<b>不算 Open</b></div>
+    <div class="result" id="aRes">
+      <div class="badge" id="aBadge"><div class="front">Active</div><div class="back">Open</div></div>
+      <div class="arrow">←</div>
+      <div class="rt"><b>合約失效 → 直接 Open</b><br>不用等 6 個月，任何同事都可以有效進攻</div>
+    </div>
+  </div>
+
+  <div class="lane" id="laneB" style="left:816px">
+    <div class="lh"><div class="ln">B</div><div class="lt">合約有效，但 6 個月沒動作</div></div>
+    <div class="ls">從原 AC 最後一筆動作開始算</div>
+    <div class="tl">
+      <div class="track"></div><div class="fill" id="bFill"></div><div class="knob" id="bKnob"></div>
+      <span class="tick" style="left:0;transform:translateX(-20%)">最後動作</span><span class="tick" style="left:16.6%">1</span><span class="tick" style="left:33.3%">2</span><span class="tick" style="left:50%">3</span><span class="tick" style="left:66.6%">4</span><span class="tick" style="left:83.3%">5</span><span class="tick" style="left:100%;transform:translateX(-70%)">6 個月</span>
+    </div>
+    <ul class="ck" id="bCk">
+      <li><span class="ic">1</span>客勤紀錄（BM / PPC / Call 留言）<span class="v">無</span></li>
+      <li><span class="ic">2</span>新開案（Jobs/Positions）<span class="v">無</span></li>
+      <li><span class="ic">3</span>成案（Billings）<span class="v">無</span></li>
+    </ul>
+    <div class="result" id="bRes" style="margin-top:22px;padding-top:24px">
+      <div class="badge" id="bBadge"><div class="front">Active</div><div class="back">Open</div></div>
+      <div class="arrow">←</div>
+      <div class="rt"><b>三項都沒有 → 自動 Open</b><br>project 在跑的面試不算 AC 的動作</div>
+    </div>
+  </div>
+
+  <div class="banner" id="s1Banner"><span class="bi">💡</span><div>合約有效期間，原 AC 只要有客勤紀錄，就會延續 Account<small>反過來說：6 個月什麼都沒留下，系統就會自動把它變成 Open</small></div></div>
+</section>
+
+<!-- ================= SLIDE 2 ================= -->
+<section class="slide" id="s2">
+  <div class="h-title">Open 之後：三種結果</div>
+  <div class="h-sub">示意畫面，客戶與人物皆為虛構。看留言內容判斷，BM、PPC、Call 都記在同一個地方</div>
+
+  <div class="win">
+    <div class="chrome"><i></i><i></i><i></i><div class="url">ies / business / CLE112600001</div></div>
+    <div class="nav"><span>Candidates ▾</span><span>Businesses ▾</span><span>Positions/Jobs ▾</span><span>BD ▾</span></div>
+    <div class="crumb"><b>BUSINESS</b> &gt; CLE112600001 - ABC FUTURE TECH LTD. ABC 未來科技有限公司</div>
+    <div class="tabs"><span class="on">Business Profile</span><span>TOS/Agreements</span><span>Jobs/Positions</span><span>Comm History</span><span>Billings</span></div>
+    <div class="body2">
+      <div class="pl">
+        <div class="logo">LOGO</div>
+        <div class="cn">ABC 未來科技</div>
+        <div class="lbl">KA/Client Holder</div>
+        <div class="holder" id="holder"><div class="av chen">陳</div><div class="av lin">林</div></div>
+        <div class="hname" id="hname">小陳</div>
+        <div class="pinghint" id="ping">請 Ping 更新 Holder</div>
+      </div>
+      <div class="pr">
+        <div class="post">Remarks for this Client/Business?</div>
+        <div class="feed">
+          <div class="rem hide" id="r3">
+            <div class="av lin">林</div>
+            <div style="flex:1"><span class="when">2026/11/18</span><div class="who">小林</div><span class="chip">Comm Log Remark:</span>
+              <div class="bd">跟 HR 線上 BM，拿到一個案子：行銷主管</div></div>
+            <span class="vd good">✓ 拿到新案子</span>
+          </div>
+          <div class="rem hide" id="r2b">
+            <div class="av" style="background:#8A8F96">系</div>
+            <div style="flex:1"><span class="when">2027/05/18</span><div class="who" style="color:#666">系統</div><span class="chip" style="background:#8A8F96">Status</span>
+              <div class="bd">保護期到期，6 個月內沒有新進展</div></div>
+            <span class="vd bad">保護到期</span>
+          </div>
+          <div class="rem hide" id="r2">
+            <div class="av lin">林</div>
+            <div style="flex:1"><span class="when">2026/11/18</span><div class="who">小林</div><span class="chip">Comm Log Remark:</span>
+              <div class="bd">跟 HR 線上 BM，討論明年度招募需求</div></div>
+            <span class="vd mid">✓ 有效動作</span>
+          </div>
+          <div class="rem hide" id="r1">
+            <div class="av lin">林</div>
+            <div style="flex:1"><span class="when">2026/11/18</span><div class="who">小林</div><span class="chip">Comm Log Remark:</span>
+              <div class="bd">聯繫 HR 拿案子</div></div>
+            <span class="vd bad">✗ 看不出成效與結果</span>
+          </div>
+          <div class="rem" id="r0">
+            <div class="av chen">陳</div>
+            <div style="flex:1"><span class="when">2026/05/08</span><div class="who">小陳</div><span class="chip">Comm Log Remark:</span>
+              <div class="bd">拜訪 HR，了解年度招募計畫，目前暫無職缺</div></div>
+          </div>
+          <div class="jobtoast" id="job"><span>Jobs/Positions</span><span class="st">New</span><b>行銷主管</b><span style="color:#888">Owner：小林</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="rewind" id="rewind"><div class="ri">⟲</div><div class="rt">倒帶：回到 Open 狀態</div></div>
+  </div>
+
+  <div class="side">
+    <div class="card">
+      <div class="cap">帳戶狀態</div>
+      <div class="status">
+        <div class="badge open" id="badge2"><div class="front">Active</div><div class="back">Open</div><div class="prot">🛡 保護中</div></div>
+        <div class="sh"><div class="av chen" id="sav">陳</div><div><span id="sname">小陳</span><small id="srole">原 AC（帳戶已 Open）</small></div></div>
+      </div>
+      <div class="pbar" id="pbar">
+        <div class="row"><span>小林的保護期</span><b id="pdate">2026/11/18 → 2027/05/18</b></div>
+        <div class="track"><div class="used" id="pused"></div></div>
+        <div class="lock" id="plock">🔒 保護期內：原 AC 小陳與其他同事都不能碰</div>
+      </div>
+    </div>
+    <div class="branches">
+      <div class="br b1" id="br1"><div class="bi">✗</div><div><div class="bt">無效</div><div class="bs">維持 Open</div></div></div>
+      <div class="br b2" id="br2"><div class="bi">🛡</div><div><div class="bt">保護</div><div class="bs">6 個月</div></div></div>
+      <div class="br b3" id="br3"><div class="bi">✓</div><div><div class="bt">轉移</div><div class="bs">Holder 換人</div></div></div>
+    </div>
+    <div class="card explain">
+      <div class="ex-k" id="exk"></div>
+      <div class="ex-t" id="ext"></div>
+      <ul id="exl"></ul>
+      <div class="dots" id="dots2"></div>
+    </div>
+  </div>
+
+  <!-- summary -->
+  <div class="sum" id="sum">
+    <h2>Open 之後：三種結果對照</h2>
+    <div class="sub">看 IES 留言內容判斷，記得把動作和結果寫清楚</div>
+    <div class="cols">
+      <div class="col c1"><div class="ch"><div class="ci">✗</div><div><b>無效</b><small>這樣不算</small></div></div>
+        <div class="cb"><div class="lab">留言長這樣</div><div class="ex">聯繫 HR 拿案子</div><div class="ex">打給客戶，約下次再聊</div>
+          <div class="lab">結果</div><div class="res">維持 Open<span>看不出成效與結果，其他同事一樣可以進攻</span></div></div></div>
+      <div class="col c2"><div class="ch"><div class="ci">🛡</div><div><b>保護 6 個月</b><small>有效動作</small></div></div>
+        <div class="cb"><div class="lab">留言長這樣</div><div class="ex">跟 HR 實體／線上 BM</div><div class="ex">跟客戶討論合約更新</div>
+          <div class="lab">結果</div><div class="res">取得 6 個月保護<span>期間原 AC 與其他同事不能碰；Account 還不是你的。再做一次有效動作，從當天重新算 6 個月；到期沒進展，回到 Open</span></div></div></div>
+      <div class="col c3"><div class="ch"><div class="ci">✓</div><div><b>直接轉移</b><small>拿到結果</small></div></div>
+        <div class="cb"><div class="lab">留言長這樣</div><div class="ex">BM 後拿到新案子：行銷主管</div><div class="ex">重新簽約成功</div>
+          <div class="lab">結果</div><div class="res">Account Holder 換人<span>自己請 Ping 更新 IES 上的 Account Holder</span></div></div></div>
+    </div>
+    <div class="sban"><span>💡</span>保護期內拿到新案子或續約成功，一樣直接轉移；留言要寫清楚動作和結果</div>
+  </div>
+</section>
+
+<!-- ================= GBL ================= -->
+<section class="slide" id="gbl">
+  <div class="h-title">GBL 評估：用不同視角看 Account</div>
+  <div class="h-sub">GBL 任何時候都可以用不同視角，評估 Account 是否需要轉移；不論有無開案、有無關案</div>
+  <div class="gblL">
+    <div class="icirc" style="width:84px;height:84px;background:rgba(255,255,255,.12)"><svg viewBox="0 0 24 24" fill="#fff"><path d="M10 2a8 8 0 0 1 6.3 12.9l5.4 5.4-1.4 1.4-5.4-5.4A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg></div>
+    <h3>關案 ≠ 守成做得好</h3>
+    <p>很多時候不是沒做，而是做沒到位、做不出成果，或成果其實不是來自 Account 經營。</p>
+  </div>
+  <div class="gg" id="gg">
+    <div class="gc"><div class="icirc"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M7 22h12v-2l-2-1v-3c2-1 3-3 3-5.5C20 6 16 3 11.5 3 8 3 6 5 6 5L3 8l2 2 2-1 1 2-3 4 2 2v5z"/></svg></div><b>對手強勢</b><span>客戶持續把案子開給競爭對手</span></div>
+    <div class="gc"><div class="icirc"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm-8 20c0-4.4 3.6-8 8-8s8 3.6 8 8H4z"/></svg></div><b>客戶理解不深</b><span>不了解組織、HM 與用人需求</span></div>
+    <div class="gc"><div class="icirc"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M3 20h18v2H3zM5 10h3v8H5zm5-4h3v12h-3zm5 7h3v5h-3z"/></svg></div><b>開案／關案率不佳</b><span>有在跑，但轉換不出結果</span></div>
+    <div class="gc"><div class="icirc"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm-1 5v7h2V7h-2zm0 9v2h2v-2h-2z"/></svg></div><b>客訴處理不當</b><span>問題發生時處理不夠到位</span></div>
+    <div class="gc"><div class="icirc"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M3 4h14v10H8l-5 4V4zm16 4h2v14l-4-3H9v-3h10V8z"/></svg></div><b>客戶溝通不周全</b><span>資訊落差、期待沒有對齊</span></div>
+    <div class="gc"><div class="icirc"><svg viewBox="0 0 24 24" fill="#6E8499"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg></div><b>其他經營面向</b><span>任何影響客戶潛力的因素</span></div>
+  </div>
+  <svg class="lens" id="lens" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="rgba(184,149,90,.15)" stroke="#B8955A" stroke-width="2.2"/><path d="M15 15l6 6" stroke="#B8955A" stroke-width="3" stroke-linecap="round"/></svg>
+  <div class="goldban rv" data-s="2" style="top:710px;height:110px"><span style="font-size:34px">🌱</span><div><b>有經營客戶，不等於有發揮客戶所有的潛力</b>隨時可以跟 Leader／GBL 討論怎麼 Grow 這個客戶；如果沒有心 Grow，就讓其他有心的同事來 Grow。</div></div>
+</section>
+
+<!-- ================= KA ================= -->
+<section class="slide" id="ka">
+  <div class="h-title">Key Account (KA) 機制細節</div>
+  <div class="h-sub">示意畫面，客戶與人物皆為虛構。滾動 12 個月計算，Account + Project 總業績（未稅）</div>
+  <div class="win" style="width:860px">
+    <div class="chrome"><i></i><i></i><i></i><div class="url">ies / business / CLE102500017</div></div>
+    <div class="nav"><span>Candidates ▾</span><span>Businesses ▾</span><span>Positions/Jobs ▾</span><span>BD ▾</span></div>
+    <div class="crumb"><b>BUSINESS</b> &gt; CLE102500017 - XYZ DIGITAL CORP. XYZ 數位股份有限公司</div>
+    <div class="tabs"><span>Business Profile</span><span>Jobs/Positions</span><span class="on">Billings</span><span class="isKA">Is KA:<b id="isKA">NO</b></span></div>
+    <div class="body2" style="display:block;padding:18px 20px">
+      <div style="font-size:15px;color:#333;margin-bottom:10px">List of all Billings for this Client（近 12 個月）</div>
+      <table class="ktable">
+        <tr><th>Sales Date</th><th>Position Title</th><th>Owner</th><th style="text-align:right">Triggered Amt</th></tr>
+        <tr class="k" id="kb1"><td>2025/10/15</td><td>業務經理</td><td>小陳</td><td style="text-align:right">520,000</td></tr>
+        <tr class="k" id="kb2"><td>2026/02/20</td><td>財務主管</td><td>小陳</td><td style="text-align:right">680,000</td></tr>
+        <tr class="k" id="kb3"><td>2026/06/18</td><td>資深工程師</td><td>小陳</td><td style="text-align:right">650,000</td></tr>
+      </table>
+      <div id="kjob" class="jobtoast" style="position:static;margin-top:22px;display:inline-flex"><span>Jobs/Positions</span><span class="st">New</span><b>行銷經理</b><span style="color:#888">開案日 2026/09/02</span></div>
+    </div>
+    <div class="life" id="klife">
+      <h3>KA 的生命週期</h3>
+      <div style="font-size:16px;color:var(--muted)">2026/06/18 達標 → KA 生效，維持 4 季</div>
+      <div class="q" id="kq"><div>Q1</div><div>Q2</div><div>Q3</div><div>Q4</div></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--muted)"><span>2026/06 生效</span><span>2027/06 到期檢查</span></div>
+      <div class="fork">
+        <div style="background:var(--okTint)"><b style="color:var(--ok)">自動延續</b>4 季期間，每個滾動 12 個月都維持 180 萬以上，且至少 3 案</div>
+        <div style="background:var(--badTint)"><b style="color:var(--bad)">期滿失效</b>任一條件沒達到，撐滿從生效日起算的 4 季後失效</div>
+      </div>
+      <div style="margin-top:22px;font-size:17px;background:var(--goldTint);border-radius:10px;padding:14px 18px">KA 期間開的案子，就算 KA 失效後才成交，一樣照 <b>AC 30 / Project 70</b></div>
+    </div>
+  </div>
+  <div class="kpanel">
+    <div class="card">
+      <div class="cap">達標條件（兩個都要）</div>
+      <div class="mrowk"><span>滾動 12 個月總業績</span><b id="kamt">0 萬</b></div>
+      <div class="meter"><div class="mf" id="kmf" style="width:0"></div><div class="th" style="left:81.8%"></div><div class="thl" style="left:81.8%">180 萬</div></div>
+      <div class="mrowk" style="margin-top:4px"><span>成交案數</span><span style="font-size:15px;color:var(--muted)">至少 3 案，避免一張大單靠運氣達標</span></div>
+      <div class="cases"><div class="case" id="kc1">1</div><div class="case" id="kc2">2</div><div class="case" id="kc3">3</div><div style="margin-left:auto"><span class="kabadge" id="kbadge">★ KA</span></div></div>
+    </div>
+    <div class="card">
+      <div class="cap">分潤（以開案日為準）</div>
+      <div class="split"><div class="a" id="ksplit" style="width:20%">AC 20%</div><div class="p" id="kproj">Project 80%</div></div>
+    </div>
+    <div class="card explain">
+      <div class="ex-k" id="kk"></div>
+      <div class="ex-t" id="kt"></div>
+      <ul id="kl"></ul>
+      <div class="dots" id="kdots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BREAKUP ================= -->
+<section class="slide" id="breakup">
+  <div class="h-title">分手卡機制 (Breakup Card)：引薦者的利潤保障</div>
+  <div class="wcard bk rv" data-s="0" style="left:136px;box-shadow:0 0 0 3px var(--gold),0 6px 20px rgba(0,0,0,.07)">
+    <h3>名單開發者 (Bring-in)</h3>
+    <div class="icirc" style="background:var(--goldTint)"><svg viewBox="0 0 24 24" fill="#B8955A"><path d="M1 11l5-5 4 2 3-2 4 1 6 4-3 4-3-2-5 5c-.8.8-2 .8-2.8 0l-.4-.4-.8.8c-.8.8-2 .8-2.8 0L1 11z"/></svg></div>
+    <div class="d">前期接洽，並協助安排／參與 PPC</div>
+    <div class="big" style="color:var(--gold)">10% × 前 3 個關案</div>
+    <div class="sm">（總業績）</div>
+  </div>
+  <div class="wcard bk rv" data-s="1" style="left:824px;box-shadow:0 0 0 3px var(--slate),0 6px 20px rgba(0,0,0,.07)">
+    <h3>純引薦者 (Lead Only)</h3>
+    <div class="icirc" style="background:var(--slateTint)"><svg viewBox="0 0 24 24" fill="#6E8499"><path d="M2 5h20v14H2V5zm2 2v.5l8 5 8-5V7H4zm0 2.8V17h16V9.8l-8 5-8-5z"/></svg></div>
+    <div class="d">僅引薦，未參與對話或實質推進</div>
+    <div class="big" style="color:var(--slate)">5% × 第 1 個關案</div>
+    <div class="sm">（以 On board Date 為準，同日取高者）</div>
+  </div>
+</section>
+
+<!-- ================= SPECIAL ================= -->
+<section class="slide" id="special">
+  <div class="h-title">特殊戰況裁決：當 Hiring Manager 念舊時</div>
+  <div class="wcard sp-top" style="box-shadow:0 0 0 3px var(--navy),0 6px 20px rgba(0,0,0,.07)">
+    <div class="icirc"><svg class="ring" viewBox="0 0 24 24" fill="#B8955A"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg></div>
+    <p>帳戶已轉 Open，積極同事 B 正在<b>保護期</b>談約。<br>此時客戶 HM <b>直接打給原 AC A</b>，給了一個新案子。</p>
+  </div>
+  <svg class="lines rv" data-s="1" width="1600" height="900"><path d="M800 300 V340 M370 340 H1230 M370 340 V470 M1230 340 V470" stroke="#9AA3AE" stroke-width="3" fill="none"/></svg>
+  <div class="sp-lab rv" data-s="1" style="left:120px;color:var(--gold)">原 AC A 可以執行</div>
+  <div class="sp-lab rv" data-s="1" style="left:1270px;color:var(--slate)">原 AC A 無法執行</div>
+  <div class="sp-br rv" data-s="1" style="left:60px">
+    <div class="m" style="box-shadow:0 0 0 3px var(--gold),0 6px 20px rgba(0,0,0,.07)">A 拿 100% 業績</div>
+    <div class="s rv" data-s="2" style="background:var(--goldTint)"><span style="font-size:26px">ℹ️</span>但 Account 歸屬權仍留在積極開發的同事 B 身上</div>
+  </div>
+  <div class="sp-br rv" data-s="1" style="left:920px">
+    <div class="m" style="box-shadow:0 0 0 3px var(--slate),0 6px 20px rgba(0,0,0,.07)">誠實告知客戶：內部已轉移</div>
+    <div class="s rv" data-s="2" style="background:var(--slateTint)"><span style="font-size:26px">↪️</span>把案子轉交給負責接手的同事 B</div>
+  </div>
+</section>
+
+<!-- ================= NAMING ================= -->
+<section class="slide" id="naming">
+  <div class="h-title">系統基石：IES 命名規範與別名設定</div>
+  <div class="h-sub">示意畫面，公司皆為虛構</div>
+  <div class="win" style="width:920px">
+    <div class="chrome"><i></i><i></i><i></i><div class="url">ies / businesses / search</div></div>
+    <div class="nav"><span>Candidates ▾</span><span>Businesses ▾</span><span>Positions/Jobs ▾</span><span>BD ▾</span></div>
+    <div class="crumb"><b>BUSINESSES</b> &gt; Search</div>
+    <div class="body2" style="display:block;top:110px;padding:22px">
+      <div class="srch"><div class="box"><span id="ntype"></span><span class="cur"></span></div><div class="found" id="nfound"></div></div>
+      <table class="ntable">
+        <tr><th>Code</th><th>Business Name</th><th>Alias Name</th><th>Country</th></tr>
+        <tr id="n1"><td class="code">CLE011600019</td><td id="n1name">Nova Media Inc. 諾瓦數位媒體股份有限公司台灣分公司</td><td id="n1alias">Nova / 諾瓦直播</td><td>Taiwan</td></tr>
+        <tr id="n2" class="gone"><td class="code">CLE111800052</td><td>諾瓦直播</td><td></td><td>—</td></tr>
+      </table>
+      <div id="nnote" style="margin-top:18px;font-size:16px;color:#555"></div>
+    </div>
+  </div>
+  <div class="rulecards">
+    <div class="rc" id="rc1"><b>① 命名：英文在前，中文在後</b><span>例：Nova Media Inc. 諾瓦數位媒體股份有限公司台灣分公司</span></div>
+    <div class="rc" id="rc2"><b>② 必須設定別名</b><span>放業界慣稱、或聯絡人容易搜尋的名稱，例：Nova / 諾瓦直播</span></div>
+    <div class="card explain" style="min-height:300px">
+      <div class="ex-k" id="nk"></div>
+      <div class="ex-t" id="nt" style="font-size:23px"></div>
+      <ul id="nl"></ul>
+      <div class="dots" id="ndots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DUP ================= -->
+<section class="slide" id="dup">
+  <div class="h-title">系統基石：消滅重複與錯誤建檔</div>
+  <div class="h-sub">示意畫面，公司皆為虛構</div>
+  <div class="win" style="width:920px">
+    <div class="chrome"><i></i><i></i><i></i><div class="url">ies / businesses / search?q=orbit</div></div>
+    <div class="nav"><span>Candidates ▾</span><span>Businesses ▾</span><span>Positions/Jobs ▾</span><span>BD ▾</span></div>
+    <div class="crumb"><b>BUSINESSES</b> &gt; Search：orbit　<span style="font-size:15px">Businesses Found: <b id="dcount" style="color:var(--bad);font-size:16px">3</b></span></div>
+    <div class="body2" style="display:block;top:110px;padding:22px">
+      <table class="ntable">
+        <tr><th>Code</th><th>Business Name</th><th>Alias</th><th>Holder</th></tr>
+        <tr id="d1"><td class="code">CLE111200052</td><td id="d1n">Orbit Software Group, Inc.</td><td>Orbit</td><td>小陳</td></tr>
+        <tr id="d2"><td class="code">CLE070800299</td><td id="d2n">Orbit Software Group, Inc.</td><td>—</td><td>小林</td></tr>
+        <tr id="d3"><td class="code">CLE091900049</td><td id="d3n">Orbit Software Japan K.K.</td><td>—</td><td>小王</td></tr>
+      </table>
+      <div id="dnote" style="margin-top:18px;font-size:16px;color:#555"></div>
+    </div>
+  </div>
+  <div class="rulecards">
+    <div class="card explain" style="min-height:420px">
+      <div class="ex-k" id="dk"></div>
+      <div class="ex-t" id="dt" style="font-size:24px"></div>
+      <ul id="dl"></ul>
+      <div class="dots" id="ddots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL ================= -->
+<section class="slide" id="fin">
+  <h2>2026 v2 重點整理</h2>
+  <div class="sub3">記住這五件事就夠了</div>
+  <div class="fc rv" data-s="0" style="left:56px"><div class="icirc"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6 2h12v2h-1v3.6a4 4 0 0 1-1.6 3.2L13.2 12l2.2 1.2A4 4 0 0 1 17 16.4V20h1v2H6v-2h1v-3.6a4 4 0 0 1 1.6-3.2L10.8 12 8.6 10.8A4 4 0 0 1 7 7.6V4H6V2z"/></svg></div><b>Open 判定</b><p>合約失效，或合約有效但 6 個月內沒有客勤、開案、Billing → 自動 Open，不需 GBL 確認</p></div>
+  <div class="fc rv" data-s="0" style="left:356px;transition-delay:.12s"><div class="icirc"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/></svg></div><b>有效動作</b><p>實體／線上 BM、討論合約更新 → 6 個月保護；只寫「打給 HR」「去拿案子」不算</p></div>
+  <div class="fc rv" data-s="0" style="left:656px;transition-delay:.24s"><div class="icirc"><svg viewBox="0 0 24 24" fill="#fff"><path d="M4 7h11l-3-3 1.4-1.4L19.8 9l-6.4 6.4L12 14l3-3H4V7zm16 10H9l3 3-1.4 1.4L4.2 15l6.4-6.4L12 10l-3 3h11v4z"/></svg></div><b>轉移</b><p>拿到新案子或續約成功 → Account Holder 換人，自己請 Ping 更新 IES</p></div>
+  <div class="fc rv" data-s="0" style="left:956px;transition-delay:.36s"><div class="icirc"><svg viewBox="0 0 24 24" fill="#fff"><path d="M10 2a8 8 0 0 1 6.3 12.9l5.4 5.4-1.4 1.4-5.4-5.4A8 8 0 1 1 10 2zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg></div><b>GBL 評估</b><p>任何時候都可以從不同視角，評估 Account 是否需要轉移</p></div>
+  <div class="fc rv" data-s="0" style="left:1256px;transition-delay:.48s"><div class="icirc"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8L12 2z"/></svg></div><b>Key Account</b><p>滾動 12 個月 180 萬 + 至少 3 案；KA 期間開的案子，AC 分潤從 20% 變 30%</p></div>
+  <div class="fin-ft rv" data-s="0" style="transition-delay:.7s">有心就好好做，沒心就放出來：一起把客戶的潛力做出來</div>
+</section>
+
+
+<div class="hint">點擊／→ 下一步　← 上一步　F 全螢幕</div>
+<div class="pageno" id="pageno"></div>
+<div id="bar"></div>
+<div id="ctrl"><button id="bPrev">◀</button><span class="pg" id="pg"></span><button id="bNext">▶</button><button id="bAuto">▶ 自動播放</button></div>
+</div></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const fade = el => restart(el, "fadein");
+
+/* ---------- slide 1 ---------- */
+const S1 = {
+  el: $("#s1"), n: 4,
+  render(i, dir) {
+    const a = i >= 1, b = i >= 2;
+    $("#laneA").classList.toggle("focus", i === 1); $("#laneB").classList.toggle("focus", i === 2);
+    $("#laneA").classList.toggle("dim", i === 2); $("#laneB").classList.toggle("dim", i === 1);
+    // lane A
+    const st = $("#aSt");
+    st.textContent = a ? "Expired" : "Approved"; st.className = "st " + (a ? "r" : "g");
+    $("#aTxt").textContent = a ? "失效（沒有續約，也沒有共識沿用）" : "有效";
+    $("#aBadge").classList.toggle("open", a); $("#aRes").classList.toggle("done", a); $("#aNote").classList.toggle("on", a);
+    if (a && dir > 0 && i === 1) restart($("#aToday"), "shake");
+    // lane B
+    const fill = $("#bFill"), knob = $("#bKnob"), lis = [...document.querySelectorAll("#bCk li")];
+    clearTimeout(this.t); (this.ts || []).forEach(clearTimeout); this.ts = [];
+    if (b && i === 2 && dir > 0) {
+      fill.classList.remove("run"); knob.classList.remove("run"); fill.style.width = ""; void fill.offsetWidth;
+      fill.classList.add("run"); knob.classList.add("run");
+      lis.forEach(li => li.classList.remove("on"));
+      $("#bBadge").classList.remove("open"); $("#bRes").classList.remove("done");
+      lis.forEach((li, k) => this.ts.push(setTimeout(() => li.classList.add("on"), 700 + k * 650)));
+      this.ts.push(setTimeout(() => { $("#bBadge").classList.add("open"); $("#bRes").classList.add("done"); }, 2600));
+    } else {
+      fill.classList.toggle("run", b); knob.classList.toggle("run", b);
+      lis.forEach(li => li.classList.toggle("on", b));
+      $("#bBadge").classList.toggle("open", b); $("#bRes").classList.toggle("done", b);
+    }
+    $("#s1Banner").classList.toggle("on", i >= 3);
+  }
+};
+
+/* ---------- slide 2 ---------- */
+const STEPS2 = [
+  { br: 0, k: ["neu", "起點"], t: "帳戶已經 <em>Open</em>，小林想進攻。依照留言內容，會有三種結果：", l: ["只有留言 → 無效", "正式的有效動作 → 6 個月保護", "拿到新案子或重新簽約 → 直接轉移"] },
+  { br: 1, rem: ["r1"], hl: "r1", shake: true, k: ["bad", "✗ 這樣不算"], t: "只寫「聯繫 HR 拿案子」，<em>看不出成效和結果</em>。", l: ["打給客戶、打給 HR、說要去拿案子，都不算", "帳戶維持 Open，其他同事一樣可以進攻"] },
+  { br: 2, rewind: true, rem: ["r2"], hl: "r2", protect: true, k: ["mid", "🛡 這樣算有效動作"], t: "跟 HR <em>線上 BM</em>，討論明年度招募需求，<em>即使還沒拿到案子</em>。", l: ["實體 BM、線上 BM、討論合約更新，這種正式動作都算", "小林拿到 6 個月保護，期間原 AC 和其他同事都不能碰", "但 Account 還不是小林的"] },
+  { br: 2, rem: ["r2", "r2b"], hl: "r2b", protect: true, expire: true, k: ["mid", "🛡 保護到期"], t: "6 個月過去，<em>沒有新的進展</em> → 保護到期，<em>回到 Open</em>。", l: ["保護期內再做一次有效動作，從當天重新起算 6 個月", "保護期內拿到案子，就直接轉移（下一個情境）"] },
+  { br: 3, rewind: true, rem: ["r3"], hl: "r3", job: true, swap: true, k: ["good", "✓ 這樣直接轉移"], t: "線上 BM 後<em>拿到新案子：行銷主管</em>。", l: ["拿到新案子，或重新簽約成功 → Account Holder 換成小林", "保護期內拿到案子，一樣直接轉移", "小林自己請 Ping 更新 IES 上的 Account Holder"] },
+  { br: 3, summary: true, rem: ["r3"], job: true, swap: true, k: ["good", "總結"], t: "", l: [] },
+];
+const dots2 = $("#dots2"); STEPS2.forEach(() => dots2.appendChild(Object.assign(document.createElement("span"), { className: "dot" })));
+const S2 = {
+  el: $("#s2"), n: STEPS2.length,
+  render(i, dir) {
+    const s = STEPS2[i];
+    (this.ts || []).forEach(clearTimeout); this.ts = [];
+    const apply = () => {
+      ["r1", "r2", "r2b", "r3"].forEach(id => { const r = $("#" + id); r.classList.toggle("hide", !(s.rem || []).includes(id)); r.classList.toggle("hl", s.hl === id); });
+      $("#job").classList.toggle("on", !!s.job);
+      $("#holder").classList.toggle("swap", !!s.swap); $("#hname").textContent = s.swap ? "小林" : "小陳";
+      $("#ping").classList.toggle("on", !!s.swap);
+      const sav = $("#sav"); sav.className = "av " + (s.swap ? "lin" : "chen"); sav.textContent = s.swap ? "林" : "陳";
+      $("#sname").textContent = s.swap ? "小林" : (s.protect && !s.expire ? "小林" : "小陳");
+      if (s.protect && !s.expire) { sav.className = "av lin"; sav.textContent = "林"; }
+      $("#srole").textContent = s.swap ? "新 Account Holder" : s.protect && !s.expire ? "保護中（Account 還不是他的）" : "原 AC（帳戶已 Open）";
+      const badge = $("#badge2");
+      badge.classList.toggle("open", !s.swap);
+      badge.classList.toggle("protect", !!s.protect && !s.expire);
+      $("#pbar").classList.toggle("on", !!s.protect);
+      const used = $("#pused");
+      used.classList.remove("run"); used.style.width = "8%";
+      $("#plock").textContent = s.expire ? "⏰ 保護到期，帳戶回到 Open" : "🔒 保護期內：原 AC 小陳與其他同事都不能碰";
+      if (s.expire) {
+        if (dir > 0) { void used.offsetWidth; used.style.width = ""; used.classList.add("run");
+          badge.classList.add("protect"); this.ts.push(setTimeout(() => badge.classList.remove("protect"), 2700));
+          $("#r2b").classList.add("hide"); this.ts.push(setTimeout(() => $("#r2b").classList.remove("hide"), 2700));
+        } else { used.style.width = "100%"; }
+      }
+      if (s.shake && dir > 0) this.ts.push(setTimeout(() => restart(badge, "shake"), 700));
+    };
+    if (s.rewind && dir > 0) { restart($("#rewind"), "go"); this.ts.push(setTimeout(apply, 600)); } else apply();
+    [1, 2, 3].forEach(k => { const b = $("#br" + k); b.classList.toggle("on", s.br === k); b.classList.toggle("seen", s.br > k); });
+    const kk = $("#exk"); kk.className = "ex-k " + s.k[0]; kk.textContent = s.k[1];
+    $("#ext").innerHTML = s.t; $("#exl").innerHTML = s.l.map(x => `<li>${x}</li>`).join("");
+    [kk, $("#ext"), $("#exl")].forEach(fade);
+    [...dots2.children].forEach((d, k) => d.classList.toggle("on", k === i));
+    $("#sum").classList.toggle("on", !!s.summary);
+  }
+};
+
+/* ---------- generic helpers ---------- */
+function reveal(el, i) { el.querySelectorAll(".rv").forEach(e => e.classList.toggle("in", i >= +e.dataset.s)); }
+function mk(id, n, extra) { const el = $("#" + id); return { el, n, render(i, dir) { reveal(el, i); if (extra) extra.call(this, i, dir); } }; }
+function explain(prefix, s, i, total) {
+  const k = $("#" + prefix + "k"); k.className = "ex-k " + s.k[0]; k.textContent = s.k[1];
+  $("#" + prefix + "t").innerHTML = s.t; $("#" + prefix + "l").innerHTML = (s.l || []).map(x => `<li>${x}</li>`).join("");
+  [k, $("#" + prefix + "t"), $("#" + prefix + "l")].forEach(fade);
+  const d = $("#" + prefix + "dots");
+  if (!d.children.length) for (let j = 0; j < total; j++) d.appendChild(Object.assign(document.createElement("span"), { className: "dot" }));
+  [...d.children].forEach((x, j) => x.classList.toggle("on", j === i));
+}
+function countTo(el, from, to, ms, fmt = v => Math.round(v)) {
+  const t0 = performance.now(); cancelAnimationFrame(el._raf);
+  const step = t => { const p = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(from + (to - from) * e); if (p < 1) el._raf = requestAnimationFrame(step); };
+  el._raf = requestAnimationFrame(step);
+}
+const BLD = '<svg viewBox="0 0 24 24"><path d="M4 22V3h11v5h5v14h-7v-4h-2v4H4zm3-16v2h2V6H7zm4 0v2h2V6h-2zM7 10v2h2v-2H7zm4 0v2h2v-2h-2zm5 0v2h2v-2h-2zM7 14v2h2v-2H7zm4 0v2h2v-2h-2zm5 0v2h2v-2h-2z"/></svg>';
+
+/* ---------- cover / core / final ---------- */
+const COVER = mk("cover", 1), CORE = mk("core", 1), FIN = mk("fin", 1);
+
+/* ---------- review ---------- */
+const bg = $("#bg"); for (let k = 0; k < 18; k++) bg.insertAdjacentHTML("beforeend", `<div class="bld">${BLD}</div>`);
+const LIT = [1, 3, 4, 6, 8, 9, 11, 12, 14, 15, 17];
+const REVIEW = mk("review", 2, function (i, dir) {
+  (this.ts || []).forEach(clearTimeout); this.ts = [];
+  const blds = [...bg.children];
+  if (i === 0 && dir >= 0) {
+    blds.forEach(b => b.classList.remove("lit"));
+    countTo($("#cnt1"), 0, 11, 1800); countTo($("#cnt2"), 0, 300, 1800); countTo($("#cnt3"), 0, 400, 1800);
+    LIT.forEach((k, j) => this.ts.push(setTimeout(() => blds[k].classList.add("lit"), 300 + j * 150)));
+  } else {
+    $("#cnt1").textContent = 11; $("#cnt2").textContent = 300; $("#cnt3").textContent = 400;
+    LIT.forEach(k => blds[k].classList.add("lit"));
+  }
+});
+
+/* ---------- states ---------- */
+const STATES = mk("states", 3, function (i) { const k = $("#stKey"); k.classList.remove("pulse"); if (i === 2) { void k.offsetWidth; k.classList.add("pulse"); } });
+
+/* ---------- GBL ---------- */
+const GBL = mk("gbl", 3, function (i, dir) {
+  (this.ts || []).forEach(clearTimeout); this.ts = [];
+  const cards = [...document.querySelectorAll("#gg .gc")], lens = $("#lens");
+  const pos = k => ({ x: 556 + (k % 3) * 336 + 316 - 104, y: 160 + Math.floor(k / 3) * 270 + 14 });
+  cards.forEach(c => c.classList.remove("lit"));
+  if (i === 0) { cards.forEach(c => c.classList.remove("seen")); lens.classList.remove("on"); return; }
+  if (i === 1 && dir > 0) {
+    cards.forEach(c => c.classList.remove("seen"));
+    const p0 = pos(0); Object.assign(lens.style, { left: p0.x + "px", top: p0.y + "px" }); lens.classList.add("on");
+    cards.forEach((c, k) => this.ts.push(setTimeout(() => {
+      const p = pos(k); Object.assign(lens.style, { left: p.x + "px", top: p.y + "px" });
+      cards.forEach(x => x.classList.remove("lit")); c.classList.add("lit", "seen");
+    }, 200 + k * 650)));
+    this.ts.push(setTimeout(() => { cards.forEach(x => x.classList.remove("lit")); lens.classList.remove("on"); }, 200 + 6 * 650));
+  } else { cards.forEach(c => c.classList.add("seen")); lens.classList.remove("on"); }
+});
+
+/* ---------- KA ---------- */
+const KSTEPS = [
+  { rows: 0, amt: 0, cases: 0, k: ["neu", "達標條件"], t: "KA 要同時滿足：滾動 12 個月 <em>180 萬</em>，且至少 <em>3 案</em>。", l: ["Account + Project 總業績，未稅", "達標後，KA 期間開的案子 AC 分潤從 20% 變 30%"] },
+  { rows: 1, amt: 52, cases: 1, k: ["neu", "第 1 案"], t: "2025/10 成交業務經理：<em>52 萬</em>，1 案。", l: [] },
+  { rows: 2, amt: 120, cases: 2, k: ["neu", "第 2 案"], t: "2026/02 成交財務主管：累計 <em>120 萬</em>，2 案。", l: ["如果只有一張 200 萬的大單：金額到了，但案數不夠，不算 KA"] },
+  { rows: 3, amt: 185, cases: 3, ka: true, k: ["good", "★ KA 生效"], t: "2026/06 第 3 案成交：累計 <em>185 萬、3 案</em> → 成為 KA。", l: ["2026/06/18 起生效，維持 4 季"] },
+  { rows: 3, amt: 185, cases: 3, ka: true, job: true, split: 30, k: ["good", "KA 期間開案"], t: "2026/09 新開「行銷經理」→ 這個案子 <em>AC 30%／Project 70%</em>。", l: ["以開案日為準：KA 生效後開的案子才適用", "生效前開的案子，照一般 20/80"] },
+  { rows: 3, amt: 185, cases: 3, ka: true, job: true, split: 30, life: true, k: ["neu", "延續或失效"], t: "KA 維持 4 季；期間一直達標就<em>自動延續</em>。", l: ["沒達標：撐滿 4 季後失效", "KA 期間開的案子，失效後才成交，仍照 30/70"] },
+];
+const KA = { el: $("#ka"), n: KSTEPS.length, prevAmt: 0, render(i, dir) {
+  const s = KSTEPS[i];
+  (this.ts || []).forEach(clearTimeout); this.ts = [];
+  [1, 2, 3].forEach(k => { $("#kb" + k).classList.toggle("on", k <= s.rows); $("#kb" + k).classList.toggle("new", k === s.rows && dir > 0 && i === k); });
+  const amtEl = $("#kamt");
+  if (dir > 0) countTo(amtEl, this.prevAmt, s.amt, 900, v => Math.round(v) + " 萬"); else amtEl.textContent = s.amt + " 萬";
+  this.prevAmt = s.amt;
+  $("#kmf").style.width = Math.min(100, s.amt / 220 * 100) + "%";
+  [1, 2, 3].forEach(k => $("#kc" + k).classList.toggle("on", k <= s.cases));
+  const delay = dir > 0 && i === 3 ? 900 : 0;
+  this.ts.push(setTimeout(() => { $("#kbadge").classList.toggle("on", !!s.ka); const b = $("#isKA"); b.textContent = s.ka ? "YES" : "NO"; b.classList.toggle("on", !!s.ka); }, delay));
+  if (!s.ka) { $("#kbadge").classList.remove("on"); }
+  $("#kjob").classList.toggle("on", !!s.job);
+  const sp = s.split || 20; $("#ksplit").style.width = sp + "%"; $("#ksplit").textContent = "AC " + sp + "%"; $("#kproj").textContent = "Project " + (100 - sp) + "%";
+  $("#klife").classList.toggle("on", !!s.life);
+  const qs = [...document.querySelectorAll("#kq div")];
+  qs.forEach(q => q.classList.remove("on"));
+  if (s.life) qs.forEach((q, k) => dir > 0 ? this.ts.push(setTimeout(() => q.classList.add("on"), 500 + k * 450)) : q.classList.add("on"));
+  explain("k", s, i, KSTEPS.length);
+} };
+
+/* ---------- breakup / special ---------- */
+const BREAKUP = mk("breakup", 2), SPECIAL = mk("special", 3);
+
+/* ---------- naming ---------- */
+const NSTEPS = [
+  { k: ["neu", "兩個規則"], t: "英文在前、中文在後；而且一定要設<em>別名</em>。", l: ["別名讓同事用慣稱也搜得到", "搜得到，才不會重複建檔"] },
+  { type: "諾瓦直播", found: 1, k: ["good", "✓ 有設別名"], t: "同事搜「諾瓦直播」，靠<em>別名</em>找到既有客戶。", l: ["看到已經有人在經營，就不會重複建檔"] },
+  { type: "諾瓦直播", noalias: true, found: 0, dupe: true, k: ["bad", "✗ 沒設別名"], t: "沒設別名 → 搜不到 → 同事以為是新客戶，<em>又建了一筆</em>。", l: ["同一個客戶兩個檔案、兩個 Holder，爭議就來了"] },
+];
+const NAMING = { el: $("#naming"), n: NSTEPS.length, render(i, dir) {
+  const s = NSTEPS[i]; clearInterval(this.iv); (this.ts || []).forEach(clearTimeout); this.ts = [];
+  const typeEl = $("#ntype"), found = $("#nfound"), n1 = $("#n1"), n2 = $("#n2"), alias = $("#n1alias");
+  alias.textContent = s.noalias ? "" : "Nova / 諾瓦直播"; alias.classList.remove("hlc");
+  n2.classList.add("gone"); n2.classList.remove("dupe"); n1.classList.remove("gone");
+  $("#rc2").classList.toggle("good", i === 1); $("#rc2").classList.toggle("bad", i === 2);
+  $("#nnote").textContent = "";
+  const finish = () => {
+    if (s.found === 1) { found.innerHTML = "Businesses Found: <b>1</b>"; alias.classList.add("hlc"); $("#nnote").textContent = "命中的是 Alias Name 欄位"; }
+    if (s.found === 0) {
+      found.innerHTML = "Businesses Found: <b>0</b>"; n1.classList.add("gone");
+      this.ts.push(setTimeout(() => { n1.classList.remove("gone"); n2.classList.remove("gone"); n2.classList.add("dupe"); found.innerHTML = '同一個客戶，變成兩筆 <span class="stamp r">重複建檔</span>'; $("#nnote").textContent = "新的一筆沒有別名，Holder 也不同"; }, 1200));
+    }
+  };
+  if (!s.type) { typeEl.textContent = ""; found.textContent = ""; }
+  else if (dir > 0) {
+    typeEl.textContent = ""; found.textContent = ""; let c = 0;
+    this.iv = setInterval(() => { typeEl.textContent = s.type.slice(0, ++c); if (c >= s.type.length) { clearInterval(this.iv); this.ts.push(setTimeout(finish, 350)); } }, 220);
+  } else { typeEl.textContent = s.type; finish(); }
+  explain("n", s, i, NSTEPS.length);
+} };
+
+/* ---------- dup ---------- */
+const DSTEPS = [
+  { k: ["bad", "Problem"], t: "同一個客戶被建了好幾筆，<em>Holder 各不相同</em>。", l: ["極易引發同事之間的誤會與爭議"] },
+  { merge: true, k: ["good", "Solution ①"], t: "誤建的檔案標註「<em>正確的是 CLE111200052</em>」，合併到同一筆。", l: ["發現重複就主動處理，不要放著"] },
+  { merge: true, rename: true, k: ["good", "Solution ②"], t: "把過時名稱更新成<em>最新官方名稱</em>，順便補上別名。", l: ["一個客戶、一筆檔案、一個 Holder", "維護系統客觀性"] },
+];
+const DUP = { el: $("#dup"), n: DSTEPS.length, render(i) {
+  const s = DSTEPS[i];
+  const rows = ["d1", "d2", "d3"].map(id => $("#" + id));
+  rows.forEach(r => r.classList.remove("dupe", "fixed"));
+  $("#d1n").innerHTML = s.rename ? 'Orbit Software Group, Inc. 軌道軟體股份有限公司 <span class="stamp g">最新官方名稱</span>' : "Orbit Software Group Limited（舊名）";
+  $("#d1").children[2].textContent = s.rename ? "Orbit / 軌道軟體" : "—";
+  $("#d2n").innerHTML = s.merge ? '（誤建錯的）正確的是 CLE111200052' : "Orbit Software Group, Inc.";
+  $("#d3n").innerHTML = s.merge ? '（誤建錯的）正確的是 CLE111200052' : "Orbit Software, Inc.";
+  if (!s.merge) rows.forEach(r => r.classList.add("dupe")); else { $("#d2").classList.add("fixed"); $("#d3").classList.add("fixed"); }
+  if (s.rename) $("#d1").classList.add("fixed");
+  $("#dcount").textContent = "3";
+  $("#dnote").innerHTML = s.merge ? "之後大家搜尋都會被導到 <b>CLE111200052</b>" : "";
+  explain("d", s, i, DSTEPS.length);
+} };
+
+/* ---------- deck engine ---------- */
+const SLIDES = [COVER, REVIEW, CORE, STATES, S1, S2, GBL, KA, BREAKUP, SPECIAL, NAMING, DUP, FIN];
+const TOTAL = SLIDES.reduce((a, s) => a + s.n, 0);
+let si = 0, st = 0, autoT = null;
+function show(dir) {
+  SLIDES.forEach((s, k) => s.el.classList.toggle("on", k === si));
+  SLIDES[si].render(st, dir);
+  $("#stage").classList.toggle("dark", SLIDES[si] === FIN);
+  $("#pg").textContent = `${si + 1} / ${SLIDES.length}`;
+  const g = SLIDES.slice(0, si).reduce((a, s) => a + s.n, 0) + st;
+  $("#bar").style.width = (g / (TOTAL - 1) * 100) + "%";
+  try { history.replaceState(null, "", `#${si + 1}.${st}`); } catch (e) {}
+}
+function next() { if (st < SLIDES[si].n - 1) st++; else if (si < SLIDES.length - 1) { si++; st = 0; } else { stopAuto(); return; } show(1); }
+function prev() { if (st > 0) st--; else if (si > 0) { si--; st = SLIDES[si].n - 1; } else return; show(-1); }
+function stopAuto() { clearInterval(autoT); autoT = null; $("#bAuto").classList.remove("on"); $("#bAuto").textContent = "▶ 自動播放"; }
+function startAuto() { autoT = setInterval(next, 5200); $("#bAuto").classList.add("on"); $("#bAuto").textContent = "❚❚ 暫停"; }
+document.addEventListener("keydown", e => {
+  if (["ArrowRight", " ", "PageDown", "Enter"].includes(e.key)) { e.preventDefault(); next(); }
+  if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); prev(); }
+  if (e.key === "f" || e.key === "F") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+});
+$("#stage").addEventListener("click", e => { if (e.target.closest("#ctrl")) return; const r = $("#stage").getBoundingClientRect(); (e.clientX < r.left + r.width * 0.15 ? prev() : next()); });
+$("#bPrev").onclick = () => prev(); $("#bNext").onclick = () => next(); $("#bAuto").onclick = () => (autoT ? stopAuto() : startAuto());
+function fit() {
+  const vp = $("#viewport"), r = vp.getBoundingClientRect();
+  let w = r.width || innerWidth, h = r.height || innerHeight;
+  if (window.visualViewport) { w = Math.min(w, visualViewport.width); h = Math.min(h, visualViewport.height); }
+  $("#stage").style.transform = `translate(-50%,-50%) scale(${Math.min(w / 1600, h / 900)})`;
+}
+addEventListener("resize", fit); addEventListener("orientationchange", fit); addEventListener("load", fit);
+if (window.visualViewport) visualViewport.addEventListener("resize", fit);
+if (window.ResizeObserver) new ResizeObserver(fit).observe($("#viewport"));
+fit(); setTimeout(fit, 300);
+const m = location.hash.match(/^#(\d+)\.(\d+)$/);
+if (m) { si = Math.min(+m[1] - 1, SLIDES.length - 1); st = Math.min(+m[2], SLIDES[si].n - 1); }
+if (new URLSearchParams(location.search).get("print") === "1") document.body.classList.add("print");
+show(0);
+if (new URLSearchParams(location.search).get("auto") === "1") startAuto();
+</script>
+</body>
+</html>
