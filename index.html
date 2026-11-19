@@ -446,6 +446,23 @@ svg.lines{position:absolute;left:0;top:0;pointer-events:none}
 #prr .flt{margin-bottom:14px;font-size:18px}
 #prr .fn{height:92px;font-size:17px;gap:8px}
 
+
+/* mobile fixes */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#ctrl{position:fixed !important;right:14px;bottom:14px;z-index:100}
+#ctrl button{height:40px !important;min-width:44px !important;font-size:15px !important;background:rgba(255,255,255,.94) !important}
+#ctrl button.on{background:var(--gold) !important;color:#fff}
+#ctrl .pg{color:#C9D1DB !important;background:rgba(27,35,48,.55);border-radius:12px;padding:3px 8px}
+@media (hover:none){ .hint{display:none !important} }
+@media (max-height:500px){ #ctrl{right:8px;bottom:8px;gap:5px} #ctrl button{height:32px !important;min-width:36px !important;font-size:13px !important;padding:0 10px !important} #ctrl .pg{font-size:12px} }
+#rot{position:fixed;inset:0;background:rgba(27,35,48,.92);z-index:200;display:none;align-items:center;justify-content:center;color:#fff;text-align:center}
+#rot .rbox{display:flex;flex-direction:column;gap:12px;align-items:center;padding:24px}
+#rot b{font-size:22px}
+#rot span{font-size:15px;color:#C9D1DB}
+#rot button{margin-top:10px;border:0;background:var(--gold);color:#fff;font-size:17px;font-weight:700;padding:10px 28px;border-radius:22px;font-family:inherit}
+@media (orientation:portrait) and (max-width:820px){ body:not(.rotok) #rot{display:flex} }
+
 </style>
 </head>
 <body>
@@ -922,9 +939,11 @@ svg.lines{position:absolute;left:0;top:0;pointer-events:none}
 <div class="hint">點擊／→ 下一步　← 上一步　F 全螢幕</div>
 <div class="pageno" id="pageno"></div>
 <div id="bar"></div>
-<div id="ctrl"><button id="bPrev">◀</button><span class="pg" id="pg"></span><button id="bNext">▶</button><button id="bAuto">▶ 自動播放</button></div>
+
 </div></div>
 
+<div id="ctrl"><button id="bPrev">◀</button><span class="pg" id="pg"></span><button id="bNext">▶</button><button id="bAuto">▶ 自動播放</button></div>
+<div id="rot"><div class="rbox"><div style="font-size:54px">📱↻</div><b>橫放手機，看得更清楚</b><span>也可以直接點下方按鈕繼續看</span><button id="rotOk">直接看</button></div></div>
 <script>
 const $ = s => document.querySelector(s);
 const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
@@ -1146,7 +1165,18 @@ document.addEventListener("keydown", e => {
   if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); prev(); }
   if (e.key === "f" || e.key === "F") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
 });
-$("#stage").addEventListener("click", e => { if (e.target.closest("#ctrl")) return; const r = $("#stage").getBoundingClientRect(); (e.clientX < r.left + r.width * 0.15 ? prev() : next()); });
+const isTouch = matchMedia("(hover:none)").matches;
+let tx = null, ty = null, swiped = false;
+document.addEventListener("touchstart", e => { const t = e.touches[0]; tx = t.clientX; ty = t.clientY; swiped = false; }, { passive: true });
+document.addEventListener("touchend", e => { if (tx === null) return; const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty; tx = null;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) && !e.target.closest("#ctrl,#rot")) { swiped = true; dx < 0 ? next() : prev(); } }, { passive: true });
+document.addEventListener("click", e => {
+  if (e.target.closest("#ctrl,#rot")) return;
+  if (swiped) { swiped = false; return; }
+  if (isTouch) { next(); return; }   // phone/tablet: tap anywhere = next; swipe right or ◀ = back
+  const r = $("#stage").getBoundingClientRect(); (e.clientX < r.left + r.width * 0.15 ? prev() : next());
+});
+$("#rotOk").onclick = () => { document.body.classList.add("rotok"); fit(); };
 $("#bPrev").onclick = () => prev(); $("#bNext").onclick = () => next(); $("#bAuto").onclick = () => (autoT ? stopAuto() : startAuto());
 function fit() {
   const vp = $("#viewport"), r = vp.getBoundingClientRect();
